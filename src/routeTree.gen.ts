@@ -21,11 +21,13 @@ import { Route as PersyaratanRouteImport } from './routes/persyaratan'
 import { Route as ProfilRouteImport } from './routes/profil'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedAkunRouteImport } from './routes/_authenticated/akun'
+import { Route as AuthenticatedPanitiaRouteImport } from './routes/_authenticated/panitia'
 import { Route as BeritaIndexRouteImport } from './routes/berita.index'
 import { Route as BeritaSlugRouteImport } from './routes/berita.$slug'
 import { Route as AuthenticatedAkunIndexRouteImport } from './routes/_authenticated/akun.index'
 import { Route as AuthenticatedAkunBerkasRouteImport } from './routes/_authenticated/akun.berkas'
 import { Route as AuthenticatedAkunFormulirRouteImport } from './routes/_authenticated/akun.formulir'
+import { Route as AuthenticatedPanitiaIndexRouteImport } from './routes/_authenticated/panitia.index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -86,6 +88,11 @@ const AuthenticatedAkunRoute = AuthenticatedAkunRouteImport.update({
   path: '/akun',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPanitiaRoute = AuthenticatedPanitiaRouteImport.update({
+  id: '/panitia',
+  path: '/panitia',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const BeritaIndexRoute = BeritaIndexRouteImport.update({
   id: '/berita/',
   path: '/berita/',
@@ -112,6 +119,12 @@ const AuthenticatedAkunFormulirRoute =
     path: '/formulir',
     getParentRoute: () => AuthenticatedAkunRoute,
   } as any)
+const AuthenticatedPanitiaIndexRoute =
+  AuthenticatedPanitiaIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedPanitiaRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -125,11 +138,13 @@ export interface FileRoutesByFullPath {
   '/profil': typeof ProfilRoute
   '/reset-password': typeof ResetPasswordRoute
   '/akun': typeof AuthenticatedAkunRouteWithChildren
+  '/panitia': typeof AuthenticatedPanitiaRouteWithChildren
   '/berita/$slug': typeof BeritaSlugRoute
   '/berita/': typeof BeritaIndexRoute
   '/akun/berkas': typeof AuthenticatedAkunBerkasRoute
   '/akun/formulir': typeof AuthenticatedAkunFormulirRoute
   '/akun/': typeof AuthenticatedAkunIndexRoute
+  '/panitia/': typeof AuthenticatedPanitiaIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -147,6 +162,7 @@ export interface FileRoutesByTo {
   '/akun/berkas': typeof AuthenticatedAkunBerkasRoute
   '/akun/formulir': typeof AuthenticatedAkunFormulirRoute
   '/akun': typeof AuthenticatedAkunIndexRoute
+  '/panitia': typeof AuthenticatedPanitiaIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -162,11 +178,13 @@ export interface FileRoutesById {
   '/profil': typeof ProfilRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/akun': typeof AuthenticatedAkunRouteWithChildren
+  '/_authenticated/panitia': typeof AuthenticatedPanitiaRouteWithChildren
   '/berita/$slug': typeof BeritaSlugRoute
   '/berita/': typeof BeritaIndexRoute
   '/_authenticated/akun/berkas': typeof AuthenticatedAkunBerkasRoute
   '/_authenticated/akun/formulir': typeof AuthenticatedAkunFormulirRoute
   '/_authenticated/akun/': typeof AuthenticatedAkunIndexRoute
+  '/_authenticated/panitia/': typeof AuthenticatedPanitiaIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -182,11 +200,13 @@ export interface FileRouteTypes {
     | '/profil'
     | '/reset-password'
     | '/akun'
+    | '/panitia'
     | '/berita/$slug'
     | '/berita/'
     | '/akun/berkas'
     | '/akun/formulir'
     | '/akun/'
+    | '/panitia/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -204,6 +224,7 @@ export interface FileRouteTypes {
     | '/akun/berkas'
     | '/akun/formulir'
     | '/akun'
+    | '/panitia'
   id:
     | '__root__'
     | '/'
@@ -218,11 +239,13 @@ export interface FileRouteTypes {
     | '/profil'
     | '/reset-password'
     | '/_authenticated/akun'
+    | '/_authenticated/panitia'
     | '/berita/$slug'
     | '/berita/'
     | '/_authenticated/akun/berkas'
     | '/_authenticated/akun/formulir'
     | '/_authenticated/akun/'
+    | '/_authenticated/panitia/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -327,6 +350,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAkunRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/panitia': {
+      id: '/_authenticated/panitia'
+      path: '/panitia'
+      fullPath: '/panitia'
+      preLoaderRoute: typeof AuthenticatedPanitiaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/berita/': {
       id: '/berita/'
       path: '/berita'
@@ -362,6 +392,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAkunFormulirRouteImport
       parentRoute: typeof AuthenticatedAkunRoute
     }
+    '/_authenticated/panitia/': {
+      id: '/_authenticated/panitia/'
+      path: '/'
+      fullPath: '/panitia/'
+      preLoaderRoute: typeof AuthenticatedPanitiaIndexRouteImport
+      parentRoute: typeof AuthenticatedPanitiaRoute
+    }
   }
 }
 
@@ -380,12 +417,25 @@ const AuthenticatedAkunRouteChildren: AuthenticatedAkunRouteChildren = {
 const AuthenticatedAkunRouteWithChildren =
   AuthenticatedAkunRoute._addFileChildren(AuthenticatedAkunRouteChildren)
 
+interface AuthenticatedPanitiaRouteChildren {
+  AuthenticatedPanitiaIndexRoute: typeof AuthenticatedPanitiaIndexRoute
+}
+
+const AuthenticatedPanitiaRouteChildren: AuthenticatedPanitiaRouteChildren = {
+  AuthenticatedPanitiaIndexRoute: AuthenticatedPanitiaIndexRoute,
+}
+
+const AuthenticatedPanitiaRouteWithChildren =
+  AuthenticatedPanitiaRoute._addFileChildren(AuthenticatedPanitiaRouteChildren)
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAkunRoute: typeof AuthenticatedAkunRouteWithChildren
+  AuthenticatedPanitiaRoute: typeof AuthenticatedPanitiaRouteWithChildren
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAkunRoute: AuthenticatedAkunRouteWithChildren,
+  AuthenticatedPanitiaRoute: AuthenticatedPanitiaRouteWithChildren,
 }
 
 const AuthenticatedRouteRouteWithChildren =

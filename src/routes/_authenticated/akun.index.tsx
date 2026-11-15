@@ -19,8 +19,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { berkasQuery, pendaftaranQuery, pesanError, profilQuery, type PendaftaranDenganGelombang } from "@/lib/akun";
 import { gelombangQuery, jenisBerkasQuery, toGelombang, type JenisBerkasRow } from "@/lib/ppdb-queries";
 import { statusGelombang, tanggalPanjang, tanggalPendek } from "@/lib/gelombang";
-import { bisaDiubah, isianKurang, statusLabel, type StatusPendaftaran } from "@/lib/pendaftaran-rules";
+import { bisaDiubah, isianKurang, type StatusPendaftaran } from "@/lib/pendaftaran-rules";
 import { cn } from "@/lib/utils";
+import { StatusPill } from "@/components/site/StatusPill";
 
 export const Route = createFileRoute("/_authenticated/akun/")({
   component: StatusPage,
@@ -329,16 +330,6 @@ function langkahBerikutnya(s: StatusPendaftaran) {
     default:
       return "";
   }
-}
-
-export function StatusPill({ status }: { status: StatusPendaftaran }) {
-  const tone =
-    status === "perlu_perbaikan" || status === "tidak_diterima"
-      ? "border-destructive/40 text-destructive"
-      : status === "draf"
-        ? "border-border text-muted-foreground"
-        : "border-primary/40 text-primary";
-  return <span className={cn("inline-flex items-center rounded-sm border px-2.5 py-1 eyebrow", tone)}>{statusLabel[status]}</span>;
 }
 
 function ChecklistRow({

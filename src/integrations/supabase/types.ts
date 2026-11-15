@@ -115,6 +115,7 @@ export type Database = {
           maks_bytes: number
           mime_types: string[]
           nama: string
+          panduan_pemeriksaan: string | null
           urutan: number
           wajib: boolean
         }
@@ -125,6 +126,7 @@ export type Database = {
           maks_bytes: number
           mime_types: string[]
           nama: string
+          panduan_pemeriksaan?: string | null
           urutan?: number
           wajib?: boolean
         }
@@ -135,10 +137,74 @@ export type Database = {
           maks_bytes?: number
           mime_types?: string[]
           nama?: string
+          panduan_pemeriksaan?: string | null
           urutan?: number
           wajib?: boolean
         }
         Relationships: []
+      }
+      pemeriksaan_berkas: {
+        Row: {
+          berkas_id: string
+          created_at: string
+          dimulai_at: string
+          id: string
+          kode_galat: string | null
+          model: string | null
+          pendaftaran_id: string
+          pesan_galat: string | null
+          ringkasan: string | null
+          selesai_at: string | null
+          sesuai: boolean | null
+          status: Database["public"]["Enums"]["status_pemeriksaan"]
+          storage_path: string
+        }
+        Insert: {
+          berkas_id: string
+          created_at?: string
+          dimulai_at?: string
+          id?: string
+          kode_galat?: string | null
+          model?: string | null
+          pendaftaran_id: string
+          pesan_galat?: string | null
+          ringkasan?: string | null
+          selesai_at?: string | null
+          sesuai?: boolean | null
+          status?: Database["public"]["Enums"]["status_pemeriksaan"]
+          storage_path: string
+        }
+        Update: {
+          berkas_id?: string
+          created_at?: string
+          dimulai_at?: string
+          id?: string
+          kode_galat?: string | null
+          model?: string | null
+          pendaftaran_id?: string
+          pesan_galat?: string | null
+          ringkasan?: string | null
+          selesai_at?: string | null
+          sesuai?: boolean | null
+          status?: Database["public"]["Enums"]["status_pemeriksaan"]
+          storage_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pemeriksaan_berkas_berkas_id_fkey"
+            columns: ["berkas_id"]
+            isOneToOne: true
+            referencedRelation: "berkas_pendaftaran"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pemeriksaan_berkas_pendaftaran_id_fkey"
+            columns: ["pendaftaran_id"]
+            isOneToOne: false
+            referencedRelation: "pendaftaran"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       pendaftaran: {
         Row: {
@@ -256,6 +322,110 @@ export type Database = {
         }
         Relationships: []
       }
+      riwayat_verifikasi: {
+        Row: {
+          catatan: string | null
+          created_at: string
+          id: string
+          oleh: string
+          pendaftaran_id: string
+          status_baru: Database["public"]["Enums"]["status_pendaftaran"]
+          status_sebelum: Database["public"]["Enums"]["status_pendaftaran"]
+        }
+        Insert: {
+          catatan?: string | null
+          created_at?: string
+          id?: string
+          oleh: string
+          pendaftaran_id: string
+          status_baru: Database["public"]["Enums"]["status_pendaftaran"]
+          status_sebelum: Database["public"]["Enums"]["status_pendaftaran"]
+        }
+        Update: {
+          catatan?: string | null
+          created_at?: string
+          id?: string
+          oleh?: string
+          pendaftaran_id?: string
+          status_baru?: Database["public"]["Enums"]["status_pendaftaran"]
+          status_sebelum?: Database["public"]["Enums"]["status_pendaftaran"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "riwayat_verifikasi_pendaftaran_id_fkey"
+            columns: ["pendaftaran_id"]
+            isOneToOne: false
+            referencedRelation: "pendaftaran"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      temuan_berkas: {
+        Row: {
+          catatan_panitia: string | null
+          created_at: string
+          detail: string
+          ditinjau_at: string | null
+          ditinjau_oleh: string | null
+          id: string
+          judul: string
+          kategori: string
+          keputusan: Database["public"]["Enums"]["keputusan_temuan"]
+          kode_berkas: string
+          pemeriksaan_id: string
+          pendaftaran_id: string
+          tingkat: string
+          urutan: number
+        }
+        Insert: {
+          catatan_panitia?: string | null
+          created_at?: string
+          detail?: string
+          ditinjau_at?: string | null
+          ditinjau_oleh?: string | null
+          id?: string
+          judul: string
+          kategori: string
+          keputusan?: Database["public"]["Enums"]["keputusan_temuan"]
+          kode_berkas: string
+          pemeriksaan_id: string
+          pendaftaran_id: string
+          tingkat?: string
+          urutan?: number
+        }
+        Update: {
+          catatan_panitia?: string | null
+          created_at?: string
+          detail?: string
+          ditinjau_at?: string | null
+          ditinjau_oleh?: string | null
+          id?: string
+          judul?: string
+          kategori?: string
+          keputusan?: Database["public"]["Enums"]["keputusan_temuan"]
+          kode_berkas?: string
+          pemeriksaan_id?: string
+          pendaftaran_id?: string
+          tingkat?: string
+          urutan?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "temuan_berkas_pemeriksaan_id_fkey"
+            columns: ["pemeriksaan_id"]
+            isOneToOne: false
+            referencedRelation: "pemeriksaan_berkas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "temuan_berkas_pendaftaran_id_fkey"
+            columns: ["pendaftaran_id"]
+            isOneToOne: false
+            referencedRelation: "pendaftaran"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
@@ -327,10 +497,51 @@ export type Database = {
         Args: { p: Database["public"]["Tables"]["pendaftaran"]["Row"] }
         Returns: undefined
       }
+      verifikasi_pendaftaran: {
+        Args: {
+          _catatan: string
+          _id: string
+          _status: Database["public"]["Enums"]["status_pendaftaran"]
+        }
+        Returns: {
+          alamat: string | null
+          catatan_panitia: string | null
+          created_at: string
+          diajukan_at: string | null
+          gelombang_id: string
+          id: string
+          jenis_kelamin: Database["public"]["Enums"]["jenis_kelamin"] | null
+          kampus: string | null
+          nama_lengkap: string | null
+          nik: string | null
+          nim: string | null
+          nomor_pendaftaran: string | null
+          prodi: string | null
+          semester: number | null
+          status: Database["public"]["Enums"]["status_pendaftaran"]
+          tahun_ajaran: string
+          tanggal_lahir: string | null
+          tempat_lahir: string | null
+          updated_at: string
+          user_id: string
+          wali_alamat: string | null
+          wali_hubungan: string | null
+          wali_nama: string | null
+          wali_telepon: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "pendaftaran"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
     }
     Enums: {
       app_role: "calon_santri" | "panitia" | "pimpinan" | "super_admin"
       jenis_kelamin: "L" | "P"
+      keputusan_temuan: "menunggu" | "dikonfirmasi" | "diabaikan"
+      status_pemeriksaan: "memproses" | "selesai" | "gagal"
       status_pendaftaran:
         | "draf"
         | "menunggu_verifikasi"
@@ -469,6 +680,8 @@ export const Constants = {
     Enums: {
       app_role: ["calon_santri", "panitia", "pimpinan", "super_admin"],
       jenis_kelamin: ["L", "P"],
+      keputusan_temuan: ["menunggu", "dikonfirmasi", "diabaikan"],
+      status_pemeriksaan: ["memproses", "selesai", "gagal"],
       status_pendaftaran: [
         "draf",
         "menunggu_verifikasi",
