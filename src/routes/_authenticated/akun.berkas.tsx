@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { Check, Eye, Lock, Trash2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ import { BUCKET_BERKAS, berkasQuery, pendaftaranQuery, pesanError, type BerkasRo
 import { formatBytes, formatMime, jenisBerkasQuery, type JenisBerkasRow } from "@/lib/ppdb-queries";
 import { bisaDiubah, cekBerkas, type StatusPendaftaran } from "@/lib/pendaftaran-rules";
 import { cn } from "@/lib/utils";
+import { periksaBerkas } from "@/lib/panitia.functions";
 
 export const Route = createFileRoute("/_authenticated/akun/berkas")({
   component: BerkasPage,
@@ -111,6 +113,7 @@ function BerkasItem({
   editable: boolean;
 }) {
   const queryClient = useQueryClient();
+  const periksa = useServerFn(periksaBerkas);
   const input = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState<null | "unggah" | "hapus">(null);
   const [error, setError] = useState<string | null>(null);
@@ -130,9 +133,11 @@ function BerkasItem({
       setBusy(null);
       { setError(pesanError(up.error)); return; }
     }
-    const { error } = await supabase
+    const { data: simpan, error } = await supabase
       .from("berkas_pendaftaran")
-      .upsert({ pendaftaran_id: pendaftaranId, kode: jenis.kode, storage_path: path, nama_file: file.name }, { onConflict: "pendaftaran_id,kode" });
+      .upsert({ pendaftaran_id: pendaftaranId, kode: jenis.kode, storage_path: path, nama_file: file.name }, { onConflict: "pendaftaran_id,kode" })
+      .select("id")
+      .single();
     if (error) {
       await supabase.storage.from(BUCKET_BERKAS).remove([path]);
       setBusy(null);
@@ -142,6 +147,8 @@ function BerkasItem({
     await refresh();
     setBusy(null);
     toast.success(`${jenis.nama} terunggah.`);
+    // AI pre-check for panitia; runs in the background and never blocks the applicant.
+    void periksa({ data: { berkasId: simpan.id } }).catch((e) => console.warn("Pemeriksaan otomatis gagal", e));
   }
 
   async function hapus() {

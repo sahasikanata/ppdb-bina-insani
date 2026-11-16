@@ -6,7 +6,7 @@ import { FormAlert, SelectInput, TextInput } from "@/components/site/form";
 import { StatusPill } from "@/components/site/StatusPill";
 import { daftarPendaftarQuery, type PendaftarRingkas } from "@/lib/panitia";
 import { pesanError } from "@/lib/akun";
-import { tanggalPendek } from "@/lib/gelombang";
+import { tanggalWIB } from "@/lib/waktu";
 import { temuanTerbuka } from "@/lib/pemeriksaan-rules";
 import type { StatusPendaftaran } from "@/lib/pendaftaran-rules";
 import { cn } from "@/lib/utils";
@@ -153,7 +153,7 @@ function Baris({ r }: { r: PendaftarRingkas }) {
         </span>
         <span className="text-sm text-muted-foreground md:col-span-2">
           {r.gelombang?.nama}
-          {r.diajukan_at ? <span className="block font-mono text-xs">{tanggalPendek(r.diajukan_at.slice(0, 10))}</span> : null}
+          {r.diajukan_at ? <span className="block font-mono text-xs">{tanggalWIB(r.diajukan_at)}</span> : null}
         </span>
         <span className="text-sm md:col-span-2">
           {memproses ? (

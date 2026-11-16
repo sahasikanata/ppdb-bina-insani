@@ -2,11 +2,12 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { panitiaUtama, waLink, TAHUN_AJARAN } from "@/data/ppdb";
 import { statusGelombang, tanggalPendek } from "@/lib/gelombang";
 import { gelombangQuery, toGelombang } from "@/lib/ppdb-queries";
 import { useAuth } from "@/lib/auth";
+import { isStaff, peranQuery } from "@/lib/panitia";
 
 const nav = [
   { to: "/profil", label: "Profil" },
@@ -22,6 +23,8 @@ export function SiteHeader() {
   const { data } = useSuspenseQuery(gelombangQuery);
   const aktif = data.map(toGelombang).find((g) => statusGelombang(g) === "Dibuka");
   const { session } = useAuth();
+  const peran = useQuery({ ...peranQuery(session?.user.id ?? ""), enabled: !!session });
+  const staf = !!session && isStaff(peran.data ?? []);
 
   return (
     <header className="relative z-40 print:hidden">
@@ -64,9 +67,16 @@ export function SiteHeader() {
 
           <div className="hidden items-center gap-5 lg:flex">
             {session ? (
-              <Button asChild size="sm">
-                <Link to="/akun">Akun saya</Link>
-              </Button>
+              <>
+                {staf ? (
+                  <Link to="/panitia" className="text-[0.92rem] link-quiet">
+                    Panel panitia
+                  </Link>
+                ) : null}
+                <Button asChild size="sm">
+                  <Link to="/akun">Akun saya</Link>
+                </Button>
+              </>
             ) : (
               <>
                 <Link to="/masuk" className="text-[0.92rem] link-quiet">
@@ -103,9 +113,16 @@ export function SiteHeader() {
               ))}
               <li className="flex gap-3 py-5">
                 {session ? (
-                  <Button asChild className="flex-1">
-                    <Link to="/akun" onClick={() => setOpen(false)}>Akun saya</Link>
-                  </Button>
+                  <>
+                    {staf ? (
+                      <Button asChild variant="outline" className="flex-1">
+                        <Link to="/panitia" onClick={() => setOpen(false)}>Panel panitia</Link>
+                      </Button>
+                    ) : null}
+                    <Button asChild className="flex-1">
+                      <Link to="/akun" onClick={() => setOpen(false)}>Akun saya</Link>
+                    </Button>
+                  </>
                 ) : (
                   <>
                     <Button asChild variant="outline" className="flex-1">

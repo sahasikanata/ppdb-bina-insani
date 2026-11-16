@@ -28,6 +28,7 @@ import { Route as AuthenticatedAkunIndexRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAkunBerkasRouteImport } from './routes/_authenticated/akun.berkas'
 import { Route as AuthenticatedAkunFormulirRouteImport } from './routes/_authenticated/akun.formulir'
 import { Route as AuthenticatedPanitiaIndexRouteImport } from './routes/_authenticated/panitia.index'
+import { Route as AuthenticatedPanitiaIdRouteImport } from './routes/_authenticated/panitia.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -125,6 +126,11 @@ const AuthenticatedPanitiaIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedPanitiaRoute,
   } as any)
+const AuthenticatedPanitiaIdRoute = AuthenticatedPanitiaIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthenticatedPanitiaRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -143,6 +149,7 @@ export interface FileRoutesByFullPath {
   '/berita/': typeof BeritaIndexRoute
   '/akun/berkas': typeof AuthenticatedAkunBerkasRoute
   '/akun/formulir': typeof AuthenticatedAkunFormulirRoute
+  '/panitia/$id': typeof AuthenticatedPanitiaIdRoute
   '/akun/': typeof AuthenticatedAkunIndexRoute
   '/panitia/': typeof AuthenticatedPanitiaIndexRoute
 }
@@ -161,6 +168,7 @@ export interface FileRoutesByTo {
   '/berita': typeof BeritaIndexRoute
   '/akun/berkas': typeof AuthenticatedAkunBerkasRoute
   '/akun/formulir': typeof AuthenticatedAkunFormulirRoute
+  '/panitia/$id': typeof AuthenticatedPanitiaIdRoute
   '/akun': typeof AuthenticatedAkunIndexRoute
   '/panitia': typeof AuthenticatedPanitiaIndexRoute
 }
@@ -183,6 +191,7 @@ export interface FileRoutesById {
   '/berita/': typeof BeritaIndexRoute
   '/_authenticated/akun/berkas': typeof AuthenticatedAkunBerkasRoute
   '/_authenticated/akun/formulir': typeof AuthenticatedAkunFormulirRoute
+  '/_authenticated/panitia/$id': typeof AuthenticatedPanitiaIdRoute
   '/_authenticated/akun/': typeof AuthenticatedAkunIndexRoute
   '/_authenticated/panitia/': typeof AuthenticatedPanitiaIndexRoute
 }
@@ -205,6 +214,7 @@ export interface FileRouteTypes {
     | '/berita/'
     | '/akun/berkas'
     | '/akun/formulir'
+    | '/panitia/$id'
     | '/akun/'
     | '/panitia/'
   fileRoutesByTo: FileRoutesByTo
@@ -223,6 +233,7 @@ export interface FileRouteTypes {
     | '/berita'
     | '/akun/berkas'
     | '/akun/formulir'
+    | '/panitia/$id'
     | '/akun'
     | '/panitia'
   id:
@@ -244,6 +255,7 @@ export interface FileRouteTypes {
     | '/berita/'
     | '/_authenticated/akun/berkas'
     | '/_authenticated/akun/formulir'
+    | '/_authenticated/panitia/$id'
     | '/_authenticated/akun/'
     | '/_authenticated/panitia/'
   fileRoutesById: FileRoutesById
@@ -399,6 +411,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPanitiaIndexRouteImport
       parentRoute: typeof AuthenticatedPanitiaRoute
     }
+    '/_authenticated/panitia/$id': {
+      id: '/_authenticated/panitia/$id'
+      path: '/$id'
+      fullPath: '/panitia/$id'
+      preLoaderRoute: typeof AuthenticatedPanitiaIdRouteImport
+      parentRoute: typeof AuthenticatedPanitiaRoute
+    }
   }
 }
 
@@ -418,10 +437,12 @@ const AuthenticatedAkunRouteWithChildren =
   AuthenticatedAkunRoute._addFileChildren(AuthenticatedAkunRouteChildren)
 
 interface AuthenticatedPanitiaRouteChildren {
+  AuthenticatedPanitiaIdRoute: typeof AuthenticatedPanitiaIdRoute
   AuthenticatedPanitiaIndexRoute: typeof AuthenticatedPanitiaIndexRoute
 }
 
 const AuthenticatedPanitiaRouteChildren: AuthenticatedPanitiaRouteChildren = {
+  AuthenticatedPanitiaIdRoute: AuthenticatedPanitiaIdRoute,
   AuthenticatedPanitiaIndexRoute: AuthenticatedPanitiaIndexRoute,
 }
 
